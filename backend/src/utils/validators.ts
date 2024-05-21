@@ -14,14 +14,27 @@ const validate = (validations: ValidationChain[]) => {
         if (errors.isEmpty()) {
           return next();
         }
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(400).json({ errors: errors.array() });
      }
 };
 
-const signupValidator = [
-  body("name").notEmpty().withMessage("Name is required"),
-  body("email").trim().isEmail().withMessage("Email is required"),
-  body("password").trim().isLength({min:6}).withMessage("Password should contain at least 6 characters")
+const loginValidator = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Invalid email format"),
+  body("password")
+    .trim()
+    .isLength({ min: 6 })
+    .withMessage("Password should contain at least 6 characters"),
 ];
 
-export { signupValidator, validate };
+
+const signupValidator = [
+  body("name").notEmpty().withMessage("Name is required"),
+  ...loginValidator,
+];
+
+export { signupValidator, validate, loginValidator };
